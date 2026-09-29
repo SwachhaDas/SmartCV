@@ -1,0 +1,64 @@
+{% extends 'portfolio/base.html' %}
+
+{% block title %}Dashboard - SmartCV{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="bi bi-speedometer2 text-primary"></i> Dashboard
+    </h2>
+    <span class="text-muted">Welcome, <strong>{{ user.username }}</strong>!</span>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card p-3 text-center h-100">
+            <i class="bi bi-mortarboard fs-1 text-primary"></i>
+            <h3 class="mt-2">{{ edu_count }}</h3>
+            <p class="text-muted mb-2">Education</p>
+            <a href="{% url 'education_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card p-3 text-center h-100">
+            <i class="bi bi-briefcase fs-1 text-primary"></i>
+            <h3 class="mt-2">{{ exp_count }}</h3>
+            <p class="text-muted mb-2">Experience</p>
+            <a href="{% url 'experience_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card p-3 text-center h-100">
+            <i class="bi bi-lightning-charge fs-1 text-primary"></i>
+            <h3 class="mt-2">{{ skill_count }}</h3>
+            <p class="text-muted mb-2">Skills</p>
+            <a href="{% url 'skill_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card p-3 text-center h-100">
+            <i class="bi bi-folder fs-1 text-primary"></i>
+            <h3 class="mt-2">{{ proj_count }}</h3>
+            <p class="text-muted mb-2">Projects</p>
+            <a href="{% url 'project_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card p-4 mt-4">
+    <h5 class="mb-3">Quick Actions</h5>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+            <i class="bi bi-person-gear"></i> Edit Profile
+        </a>
+        <a href="{% url 'sociallink_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-link-45deg"></i> Social Links ({{ social_count }})
+        </a>
+        <a href="{% url 'public_portfolio' user.username %}" target="_blank" class="btn btn-outline-success">
+            <i class="bi bi-eye"></i> View Public Portfolio
+        </a>
+    </div>
+</div>
+{% endblock %}
