@@ -54,4 +54,7 @@ urlpatterns = [
 
     # Public Portfolio
     path('u/<str:username>/', views.public_portfolio, name='public_portfolio'),
+
+    # PDF Download
+    path('download-pdf/', views.download_resume_pdf, name='download_pdf'),
 ]

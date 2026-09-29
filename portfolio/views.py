@@ -9,11 +9,13 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.http import FileResponse
 from .models import Profile, Education, Experience, Skill, Project, SocialLink
 from .forms import (
     UserRegisterForm, UserUpdateForm, ProfileUpdateForm,
     EducationForm, ExperienceForm, SkillForm, ProjectForm, SocialLinkForm
 )
+from .pdf_utils import generate_resume_pdf
 
 
 # ==================== HOME ====================
@@ -325,3 +327,36 @@ def public_portfolio(request, username):
     # Choose template based on user's choice
     template_name = f'portfolio/portfolio_{profile.template}.html'
     return render(request, template_name, context)
+
+
+# ==================== PDF DOWNLOAD ====================
+
+@login_required
+def download_resume_pdf(request):
+    """Generate and download user's resume as PDF."""
+    user = request.user
+
+    # Ensure profile exists
+    try:
+        profile = user.profile
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user=user)
+
+    # Generate PDF
+    pdf_buffer = generate_resume_pdf(
+        user=user,
+        profile=profile,
+        educations=user.educations.all(),
+        experiences=user.experiences.all(),
+        skills=user.skills.all(),
+        projects=user.projects.all(),
+        social_links=user.social_links.all(),
+    )
+
+    filename = f"{user.username}_resume.pdf"
+    return FileResponse(
+        pdf_buffer,
+        as_attachment=True,
+        filename=filename,
+        content_type='application/pdf',
+    )
