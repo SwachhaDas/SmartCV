@@ -1,0 +1,86 @@
+{% extends 'portfolio/base.html' %}
+
+{% block title %}{{ profile_user.username }} - Portfolio{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <div class="mb-5">
+            <h1 class="display-5 fw-bold">{{ profile_user.username }}</h1>
+            {% if profile.bio %}<p class="lead text-muted">{{ profile.bio }}</p>{% endif %}
+            <p class="text-muted small">
+                {% if profile_user.email %}{{ profile_user.email }}{% endif %}
+                {% if profile.phone %} · {{ profile.phone }}{% endif %}
+                · <i class="bi bi-eye"></i> {{ profile.visitor_count }}
+            </p>
+        </div>
+
+        {% if educations %}
+            <h6 class="text-uppercase text-primary fw-bold mb-3">Education</h6>
+            {% for edu in educations %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ edu.degree }}</strong>
+                        <span class="text-muted small">{{ edu.passing_year }}</span>
+                    </div>
+                    <div class="text-muted">{{ edu.institute }}{% if edu.cgpa %} · CGPA {{ edu.cgpa }}{% endif %}</div>
+                </div>
+            {% endfor %}
+            <hr class="my-4">
+        {% endif %}
+
+        {% if experiences %}
+            <h6 class="text-uppercase text-primary fw-bold mb-3">Experience</h6>
+            {% for exp in experiences %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ exp.designation }}</strong>
+                        <span class="text-muted small">
+                            {{ exp.start_date|date:"M Y" }} –
+                            {% if exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}
+                        </span>
+                    </div>
+                    <div class="text-muted">{{ exp.company }}</div>
+                    {% if exp.description %}<p class="small mt-1 mb-0">{{ exp.description }}</p>{% endif %}
+                </div>
+            {% endfor %}
+            <hr class="my-4">
+        {% endif %}
+
+        {% if skills %}
+            <h6 class="text-uppercase text-primary fw-bold mb-3">Skills</h6>
+            <p>{% for skill in skills %}{{ skill.skill_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <hr class="my-4">
+        {% endif %}
+
+        {% if projects %}
+            <h6 class="text-uppercase text-primary fw-bold mb-3">Projects</h6>
+            {% for project in projects %}
+                <div class="mb-3">
+                    <strong>{{ project.project_name }}</strong>
+                    <p class="small mb-1">{{ project.description }}</p>
+                    {% if project.live_link %}
+                        <a href="{{ project.live_link }}" target="_blank" class="small">{{ project.live_link }}</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <hr class="my-4">
+        {% endif %}
+
+        {% if social_links %}
+            <h6 class="text-uppercase text-primary fw-bold mb-3">Connect</h6>
+            <p>
+                {% for link in social_links %}
+                    <a href="{{ link.url }}" target="_blank" class="me-3">{{ link.platform }}</a>
+                {% endfor %}
+            </p>
+        {% endif %}
+
+        <div class="text-center mt-5">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-house"></i> SmartCV
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

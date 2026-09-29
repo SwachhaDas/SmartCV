@@ -1,0 +1,18 @@
+{% extends 'portfolio/base.html' %}
+
+{% block title %}Private Profile - SmartCV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-5 text-center">
+            <i class="bi bi-lock-fill text-warning" style="font-size: 4rem;"></i>
+            <h2 class="mt-3">This Profile is Private</h2>
+            <p class="text-muted">The owner has set this portfolio to private. Please contact them directly if you need access.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
