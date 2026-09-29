@@ -33,7 +33,7 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Profile.objects.create(user=user)  # Create profile for new user
+            # Profile is auto-created by the signal in signals.py
             login(request, user)
             messages.success(request, "Account created successfully!")
             return redirect('dashboard')
