@@ -3,11 +3,18 @@ from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
-    # We will use these templates for the user's public portfolio/CV
+    # Updated template choices to support 10 different designs
     TEMPLATE_CHOICES = [
-        ('classic', 'Classic Corporate'),
-        ('modern', 'Modern Executive'),
-        ('minimal', 'Minimalist Clean'),
+        ('classic', '1. Classic Corporate'),
+        ('modern', '2. Modern Executive'),
+        ('minimal', '3. Minimalist Clean'),
+        ('dark', '4. Dark Mode Pro'),
+        ('timeline', '5. Timeline Professional'),
+        ('colorful', '6. Colorful Gradient'),
+        ('card', '7. Card Layout'),
+        ('sidebar', '8. Sidebar Style'),
+        ('academic', '9. Academic CV'),
+        ('elegant', '10. Elegant Serif'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -18,7 +25,7 @@ class Profile(models.Model):
     is_public = models.BooleanField(default=True)
     visitor_count = models.PositiveIntegerField(default=0)
     
-    # NEW FEATURE: This will turn the simple portfolio into a full website layout
+    # This will turn the simple portfolio into a full website layout
     is_website_mode = models.BooleanField(default=False, help_text="Check this to make it a full website.")
 
     def __str__(self):
@@ -26,7 +33,7 @@ class Profile(models.Model):
 
 
 class ActivityHistory(models.Model):
-    """NEW FEATURE: Track user activities (like downloading CV or adding data)."""
+    """Track user activities (like downloading CV or adding data)."""
     ACTION_CHOICES = [
         ('login', 'Logged In'),
         ('download_pdf', 'Downloaded PDF Resume'),
@@ -49,7 +56,7 @@ class ActivityHistory(models.Model):
 
 
 # ==========================================
-# REMAINING MODELS (Keep your existing ones)
+# REMAINING MODELS
 # ==========================================
 
 class Education(models.Model):
@@ -100,7 +107,6 @@ class Skill(models.Model):
 
 
 class Project(models.Model):
-    # NEW FEATURE: Add project types based on your new requirement
     PROJECT_TYPES = [
         ('academic', 'Academic Project'),
         ('research', 'Research Project'),

@@ -1,0 +1,64 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Select Template - SmartCV{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="bi bi-palette text-primary"></i> Choose Your Design</h2>
+        <p class="text-muted">Preview different templates and select the one that fits you best.</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-4">
+            {% for code, name in templates %}
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <!-- Template Card -->
+                <div class="card h-100 shadow-sm border-2 {% if current_template == code %}border-primary{% else %}border-light{% endif %}">
+                    
+                    <!-- Fake Preview Image Area -->
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 160px; border-radius: 10px 10px 0 0;">
+                        {% if code == 'classic' %}<i class="bi bi-file-earmark-person text-primary" style="font-size: 4rem;"></i>
+                        {% elif code == 'modern' %}<i class="bi bi-window-stack text-success" style="font-size: 4rem;"></i>
+                        {% elif code == 'minimal' %}<i class="bi bi-justify text-dark" style="font-size: 4rem;"></i>
+                        {% elif code == 'dark' %}<i class="bi bi-moon-stars text-dark" style="font-size: 4rem;"></i>
+                        {% elif code == 'timeline' %}<i class="bi bi-clock-history text-warning" style="font-size: 4rem;"></i>
+                        {% elif code == 'colorful' %}<i class="bi bi-palette text-danger" style="font-size: 4rem;"></i>
+                        {% elif code == 'card' %}<i class="bi bi-grid-3x3 text-info" style="font-size: 4rem;"></i>
+                        {% elif code == 'sidebar' %}<i class="bi bi-layout-sidebar text-secondary" style="font-size: 4rem;"></i>
+                        {% elif code == 'academic' %}<i class="bi bi-book text-primary" style="font-size: 4rem;"></i>
+                        {% elif code == 'elegant' %}<i class="bi bi-type-italic text-secondary" style="font-size: 4rem;"></i>
+                        {% else %}<i class="bi bi-file-earmark text-muted" style="font-size: 4rem;"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body text-center p-3">
+                        <h6 class="fw-bold mb-3">{{ name }}</h6>
+                        
+                        <!-- Radio Button to Select -->
+                        <div class="form-check d-flex justify-content-center mb-3">
+                            <input class="form-check-input" type="radio" name="template" value="{{ code }}" id="{{ code }}" {% if current_template == code %}checked{% endif %} style="cursor: pointer;">
+                            <label class="form-check-label ms-2 fw-bold" for="{{ code }}" style="cursor: pointer;">
+                                {% if current_template == code %}Selected{% else %}Select{% endif %}
+                            </label>
+                        </div>
+                        
+                        <!-- Live Preview Button -->
+                        <a href="{% url 'public_portfolio' user.username %}" target="_blank" class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="bi bi-eye"></i> Live Preview
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5 mb-4">
+            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
+                <i class="bi bi-check-circle"></i> Save Selected Template
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg px-5 shadow ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

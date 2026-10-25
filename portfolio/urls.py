@@ -62,6 +62,9 @@ urlpatterns = [
     path('guideline/', views.guideline, name='guideline'),
     path('generate-cv/', views.cv_generation_options, name='generate_cv'),
 
-    # ✅ NEW: Activity History
+    # Activity History
     path('history/', views.activity_history, name='history'),
+
+    # ✅ NEW: Template Selector
+    path('templates/', views.template_selector, name='template_selector'),
 ]

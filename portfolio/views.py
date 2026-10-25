@@ -326,11 +326,11 @@ def public_portfolio(request, username):
         'social_links': user.social_links.all(),
     }
 
-    # ✅ NEW: Check if the user wants a full website or a simple portfolio
+    # ✅ Check if the user wants a full website or a simple portfolio
     if profile.is_website_mode:
         return render(request, 'portfolio/website_mode.html', context)
 
-    # Default: Choose template based on user's choice (classic, modern, minimal)
+    # Default: Choose template based on user's choice
     template_name = f'portfolio/portfolio_{profile.template}.html'
     return render(request, template_name, context)
 
@@ -424,3 +424,28 @@ def activity_history(request):
         'activities': activities
     }
     return render(request, 'portfolio/history.html', context)
+
+
+# ==================== TEMPLATE SELECTOR ====================
+
+@login_required
+def template_selector(request):
+    """Page to preview and select a portfolio template."""
+    profile = request.user.profile
+    
+    if request.method == 'POST':
+        selected_template = request.POST.get('template')
+        # Check if the selected template is valid
+        if selected_template in dict(Profile.TEMPLATE_CHOICES):
+            profile.template = selected_template
+            profile.save()
+            messages.success(request, f"Template updated successfully!")
+            return redirect('dashboard')
+            
+    # Pass all choices to the template
+    templates = Profile.TEMPLATE_CHOICES
+    context = {
+        'templates': templates,
+        'current_template': profile.template
+    }
+    return render(request, 'portfolio/template_selector.html', context)
