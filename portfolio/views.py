@@ -396,7 +396,7 @@ def download_resume_pdf(request):
         skills=user.skills.all(),
         projects=user.projects.all(),
         social_links=user.social_links.all(),
-        cv_type=cv_type # Pass the type to pdf generator if you want different styles
+        cv_type=cv_type # Pass the type to pdf generator
     )
 
     filename = f"{user.username}_{cv_type}_resume.pdf"
@@ -406,3 +406,17 @@ def download_resume_pdf(request):
         filename=filename,
         content_type='application/pdf',
     )
+
+
+# ==================== ACTIVITY HISTORY ====================
+
+@login_required
+def activity_history(request):
+    """Show user's past activities (downloads, additions, etc.)."""
+    # Fetch history from database, ordered by latest first
+    activities = ActivityHistory.objects.filter(user=request.user)
+    
+    context = {
+        'activities': activities
+    }
+    return render(request, 'portfolio/history.html', context)
