@@ -326,7 +326,11 @@ def public_portfolio(request, username):
         'social_links': user.social_links.all(),
     }
 
-    # Choose template based on user's choice
+    # ✅ NEW: Check if the user wants a full website or a simple portfolio
+    if profile.is_website_mode:
+        return render(request, 'portfolio/website_mode.html', context)
+
+    # Default: Choose template based on user's choice (classic, modern, minimal)
     template_name = f'portfolio/portfolio_{profile.template}.html'
     return render(request, template_name, context)
 

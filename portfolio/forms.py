@@ -51,13 +51,15 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['bio', 'phone', 'photo', 'template', 'is_public']
+        # ✅ Added 'is_website_mode' to the fields list
+        fields = ['bio', 'phone', 'photo', 'template', 'is_public', 'is_website_mode']
         widgets = {
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
             'template': forms.Select(attrs={'class': 'form-control'}),
             'is_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_website_mode': forms.CheckboxInput(attrs={'class': 'form-check-input'}), # ✅ Added widget
         }
 
 
@@ -118,9 +120,11 @@ class ProjectForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['project_name', 'description', 'live_link']
+        # ✅ Added 'project_type' to the fields list
+        fields = ['project_name', 'project_type', 'description', 'live_link']
         widgets = {
             'project_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'project_type': forms.Select(attrs={'class': 'form-control'}), # ✅ Added widget
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'live_link': forms.URLInput(attrs={'class': 'form-control'}),
         }
