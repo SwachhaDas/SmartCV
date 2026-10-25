@@ -3,12 +3,11 @@ from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
-    """User profile with extra info and portfolio settings."""
-
+    # We will use these templates for the user's public portfolio/CV
     TEMPLATE_CHOICES = [
-        ('classic', 'Classic'),
-        ('modern', 'Modern'),
-        ('minimal', 'Minimal'),
+        ('classic', 'Classic Corporate'),
+        ('modern', 'Modern Executive'),
+        ('minimal', 'Minimalist Clean'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -18,14 +17,42 @@ class Profile(models.Model):
     template = models.CharField(max_length=20, choices=TEMPLATE_CHOICES, default='classic')
     is_public = models.BooleanField(default=True)
     visitor_count = models.PositiveIntegerField(default=0)
+    
+    # NEW FEATURE: This will turn the simple portfolio into a full website layout
+    is_website_mode = models.BooleanField(default=False, help_text="Check this to make it a full website.")
 
     def __str__(self):
         return f"{self.user.username}'s profile"
 
 
-class Education(models.Model):
-    """User's educational background."""
+class ActivityHistory(models.Model):
+    """NEW FEATURE: Track user activities (like downloading CV or adding data)."""
+    ACTION_CHOICES = [
+        ('login', 'Logged In'),
+        ('download_pdf', 'Downloaded PDF Resume'),
+        ('add_edu', 'Added Education'),
+        ('add_exp', 'Added Experience'),
+        ('add_proj', 'Added Project'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities')
+    action = models.CharField(max_length=50, choices=ACTION_CHOICES)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    details = models.CharField(max_length=255, blank=True)
 
+    class Meta:
+        ordering = ['-timestamp'] # Shows latest activity first
+        verbose_name_plural = "Activity Histories"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+
+
+# ==========================================
+# REMAINING MODELS (Keep your existing ones)
+# ==========================================
+
+class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='educations')
     institute = models.CharField(max_length=200)
     degree = models.CharField(max_length=200)
@@ -40,8 +67,6 @@ class Education(models.Model):
 
 
 class Experience(models.Model):
-    """User's work experience."""
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='experiences')
     company = models.CharField(max_length=200)
     designation = models.CharField(max_length=200)
@@ -57,8 +82,6 @@ class Experience(models.Model):
 
 
 class Skill(models.Model):
-    """User's skills with proficiency level."""
-
     LEVEL_CHOICES = [
         ('beginner', 'Beginner'),
         ('intermediate', 'Intermediate'),
@@ -77,10 +100,16 @@ class Skill(models.Model):
 
 
 class Project(models.Model):
-    """User's portfolio projects."""
+    # NEW FEATURE: Add project types based on your new requirement
+    PROJECT_TYPES = [
+        ('academic', 'Academic Project'),
+        ('research', 'Research Project'),
+        ('ongoing', 'Ongoing Research'),
+    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
     project_name = models.CharField(max_length=200)
+    project_type = models.CharField(max_length=20, choices=PROJECT_TYPES, default='academic')
     description = models.TextField()
     live_link = models.URLField(blank=True)
 
@@ -92,8 +121,6 @@ class Project(models.Model):
 
 
 class SocialLink(models.Model):
-    """User's social media links."""
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_links')
     platform = models.CharField(max_length=50)
     url = models.URLField()

@@ -1,0 +1,51 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}How to Use - SmartCV{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-primary"><i class="bi bi-info-circle"></i> How to Use SmartCV</h1>
+        <p class="lead">Follow these simple steps to build your professional portfolio and CV.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Step 1 -->
+        <div class="col-md-6">
+            <div class="card h-100 p-4 shadow-sm border-0">
+                <h4 class="text-primary"><i class="bi bi-1-circle"></i> Create an Account</h4>
+                <p class="text-muted">Register an account to get started. Once logged in, you will have access to your personal Dashboard.</p>
+            </div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="col-md-6">
+            <div class="card h-100 p-4 shadow-sm border-0">
+                <h4 class="text-primary"><i class="bi bi-2-circle"></i> Add Your Information</h4>
+                <p class="text-muted">Go to the Dashboard and add your Education, Experience, Skills, Projects, and Social Links. Make sure to fill them out completely.</p>
+            </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="col-md-6">
+            <div class="card h-100 p-4 shadow-sm border-0">
+                <h4 class="text-primary"><i class="bi bi-3-circle"></i> Choose a Template</h4>
+                <p class="text-muted">Go to your Profile Settings. You can choose different designs for your public portfolio, and even turn it into a full website!</p>
+            </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="col-md-6">
+            <div class="card h-100 p-4 shadow-sm border-0">
+                <h4 class="text-primary"><i class="bi bi-4-circle"></i> Generate & Download CV</h4>
+                <p class="text-muted">Click "Generate CV" on your dashboard. Select whether you are applying for an Academic, Job, or Faculty position, and we will generate an ATS-friendly PDF for you.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-speedometer2"></i> Go to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

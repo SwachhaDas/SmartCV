@@ -59,8 +59,13 @@
         <a href="{% url 'public_portfolio' user.username %}" target="_blank" class="btn btn-outline-success">
             <i class="bi bi-eye"></i> View Public Portfolio
         </a>
-        <a href="{% url 'download_pdf' %}" class="btn btn-primary">
-            <i class="bi bi-file-earmark-pdf"></i> Download PDF Resume
+        
+        <!-- ✅ নতুন আপডেট: Generate CV এবং Guideline বাটন -->
+        <a href="{% url 'generate_cv' %}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-pdf"></i> Generate CV / PDF
+        </a>
+        <a href="{% url 'guideline' %}" class="btn btn-outline-info">
+            <i class="bi bi-info-circle"></i> How to Use
         </a>
     </div>
 </div>

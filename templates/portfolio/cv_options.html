@@ -1,0 +1,57 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Generate CV - SmartCV{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+            <h2 class="mb-3 fw-bold">Select Your CV Type</h2>
+            <p class="text-muted mb-5">Please select the purpose of this CV. We will check your profile and format the PDF accordingly.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-4">
+                    
+                    <!-- Option 1: Academic -->
+                    <div class="col-md-4">
+                        <label class="card h-100 p-4 shadow-sm cursor-pointer" style="cursor: pointer; border: 2px solid transparent; transition: 0.2s;" onmouseover="this.style.borderColor='#0d6efd'" onmouseout="this.style.borderColor='transparent'">
+                            <input type="radio" name="cv_type" value="academic" class="form-check-input mb-2" required>
+                            <i class="bi bi-book fs-1 text-primary"></i>
+                            <h5 class="mt-3">Academic</h5>
+                            <p class="text-muted small mb-0">For Research, MSc/PhD applications, or Teaching.</p>
+                            <small class="text-danger mt-2 d-block"><i class="bi bi-exclamation-circle"></i> Requires: Education & Project</small>
+                        </label>
+                    </div>
+
+                    <!-- Option 2: Job -->
+                    <div class="col-md-4">
+                        <label class="card h-100 p-4 shadow-sm cursor-pointer" style="cursor: pointer; border: 2px solid transparent; transition: 0.2s;" onmouseover="this.style.borderColor='#0d6efd'" onmouseout="this.style.borderColor='transparent'">
+                            <input type="radio" name="cv_type" value="job" class="form-check-input mb-2" required>
+                            <i class="bi bi-briefcase fs-1 text-primary"></i>
+                            <h5 class="mt-3">Job / Industry</h5>
+                            <p class="text-muted small mb-0">For Software, Corporate, or General Industry jobs.</p>
+                            <small class="text-danger mt-2 d-block"><i class="bi bi-exclamation-circle"></i> Requires: Skills & Experience</small>
+                        </label>
+                    </div>
+
+                    <!-- Option 3: Faculty -->
+                    <div class="col-md-4">
+                        <label class="card h-100 p-4 shadow-sm cursor-pointer" style="cursor: pointer; border: 2px solid transparent; transition: 0.2s;" onmouseover="this.style.borderColor='#0d6efd'" onmouseout="this.style.borderColor='transparent'">
+                            <input type="radio" name="cv_type" value="faculty" class="form-check-input mb-2" required>
+                            <i class="bi bi-person-video3 fs-1 text-primary"></i>
+                            <h5 class="mt-3">Faculty</h5>
+                            <p class="text-muted small mb-0">For University Lecturer or Professor positions.</p>
+                            <small class="text-danger mt-2 d-block"><i class="bi bi-exclamation-circle"></i> Requires: Education & Experience</small>
+                        </label>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-5 px-5">
+                    <i class="bi bi-magic"></i> Generate PDF CV
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

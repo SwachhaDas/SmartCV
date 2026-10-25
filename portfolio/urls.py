@@ -57,4 +57,8 @@ urlpatterns = [
 
     # PDF Download
     path('download-pdf/', views.download_resume_pdf, name='download_pdf'),
+
+    # ✅ NEW: Guideline & CV Options
+    path('guideline/', views.guideline, name='guideline'),
+    path('generate-cv/', views.cv_generation_options, name='generate_cv'),
 ]

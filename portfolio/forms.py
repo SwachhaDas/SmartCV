@@ -11,16 +11,22 @@ class UserRegisterForm(UserCreationForm):
 
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
+        label="Email",
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'you@example.com'})
     )
     username = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        label="Username",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a username'})
     )
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+        label="Password",
+        help_text="",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter password'})
     )
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+        label="Confirm Password",
+        help_text="",
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Re-enter password'})
     )
 
     class Meta:

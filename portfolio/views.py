@@ -10,7 +10,9 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import FileResponse
-from .models import Profile, Education, Experience, Skill, Project, SocialLink
+from .models import (
+    Profile, Education, Experience, Skill, Project, SocialLink, ActivityHistory
+)
 from .forms import (
     UserRegisterForm, UserUpdateForm, ProfileUpdateForm,
     EducationForm, ExperienceForm, SkillForm, ProjectForm, SocialLinkForm
@@ -329,12 +331,55 @@ def public_portfolio(request, username):
     return render(request, template_name, context)
 
 
+# ==================== NEW: GUIDELINE & CV OPTIONS ====================
+
+def guideline(request):
+    """Instruction page for users on how to use SmartCV."""
+    return render(request, 'portfolio/guideline.html')
+
+
+def cv_generation_options(request):
+    """Page to select CV type (Academic, Job, Faculty) before generating."""
+    if request.method == 'POST':
+        cv_type = request.POST.get('cv_type')
+        user = request.user
+        
+        # --- MANDATORY VALIDATION LOGIC ---
+        if cv_type == 'academic':
+            if not user.educations.exists() or not user.projects.exists():
+                messages.error(request, "For Academic CV, you must add at least 1 Education and 1 Project/Research!")
+                return redirect('dashboard')
+                
+        elif cv_type == 'job':
+            if not user.skills.exists() or not user.experiences.exists():
+                messages.error(request, "For Job CV, you must add at least 1 Skill and 1 Experience!")
+                return redirect('dashboard')
+                
+        elif cv_type == 'faculty':
+            if not user.educations.exists() or not user.experiences.exists():
+                messages.error(request, "For Faculty CV, you must add Education and Teaching Experience!")
+                return redirect('dashboard')
+
+        # Save activity history
+        ActivityHistory.objects.create(
+            user=user, 
+            action='download_pdf', 
+            details=f'Generated {cv_type.capitalize()} CV'
+        )
+
+        # Redirect to PDF download with the type
+        return redirect(f"/download-pdf/?type={cv_type}")
+
+    return render(request, 'portfolio/cv_options.html')
+
+
 # ==================== PDF DOWNLOAD ====================
 
 @login_required
 def download_resume_pdf(request):
     """Generate and download user's resume as PDF."""
     user = request.user
+    cv_type = request.GET.get('type', 'job') # Get the CV type from URL (default to job)
 
     # Ensure profile exists
     try:
@@ -351,9 +396,10 @@ def download_resume_pdf(request):
         skills=user.skills.all(),
         projects=user.projects.all(),
         social_links=user.social_links.all(),
+        cv_type=cv_type # Pass the type to pdf generator if you want different styles
     )
 
-    filename = f"{user.username}_resume.pdf"
+    filename = f"{user.username}_{cv_type}_resume.pdf"
     return FileResponse(
         pdf_buffer,
         as_attachment=True,
