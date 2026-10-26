@@ -1,0 +1,38 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}{{ profile_user.username }} - Colorful{% endblock %}
+
+{% block content %}
+<div class="rounded p-5" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);">
+    <div class="text-center mb-5">
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" class="rounded-circle mb-3 border border-4 border-white" width="150" height="150" style="object-fit: cover;">
+        {% endif %}
+        <h1 class="fw-bold text-dark">{{ profile_user.username }}</h1>
+        <p class="text-secondary fw-bold">{{ profile.bio }}</p>
+    </div>
+
+    <div class="row g-4">
+        {% for edu in educations %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="text-danger"><i class="bi bi-mortarboard"></i> {{ edu.degree }}</h5>
+                    <p class="mb-0">{{ edu.institute }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for exp in experiences %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="text-primary"><i class="bi bi-briefcase"></i> {{ exp.designation }}</h5>
+                    <p class="mb-0">{{ exp.company }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}{{ profile_user.username }} - Elegant{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="font-family: Georgia, serif;">
+    <div class="text-center mb-5 border-bottom pb-4 border-primary">
+        <h1 class="display-4 fw-bold text-dark">{{ profile_user.username }}</h1>
+        <p class="text-uppercase tracking-wide text-muted" style="letter-spacing: 2px;">{{ profile.bio }}</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 pe-5">
+            <h4 class="text-primary mb-4">Experience</h4>
+            {% for exp in experiences %}
+            <div class="mb-4">
+                <h5 class="mb-1">{{ exp.designation }}</h5>
+                <p class="text-muted font-italic">{{ exp.company }}</p>
+                <p class="small text-muted">{{ exp.start_date|date:"M Y" }} - Present</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-6 ps-5 border-start">
+            <h4 class="text-primary mb-4">Education</h4>
+            {% for edu in educations %}
+            <div class="mb-4">
+                <h5 class="mb-1">{{ edu.degree }}</h5>
+                <p class="text-muted font-italic">{{ edu.institute }}</p>
+                <p class="small text-muted">{{ edu.passing_year }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

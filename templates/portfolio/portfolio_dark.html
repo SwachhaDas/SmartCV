@@ -1,0 +1,73 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}{{ profile_user.username }} - Dark Theme{% endblock %}
+
+{% block content %}
+<!-- Dark themed portfolio layout -->
+<div class="p-5 rounded" style="background-color: #1a1a1a; color: #ffffff;">
+    
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" class="rounded-circle mb-3" width="140" height="140" style="object-fit: cover; border: 3px solid #0dcaf0;">
+        {% else %}
+            <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 140px; height: 140px; font-size: 4rem;">
+                <i class="bi bi-person"></i>
+            </div>
+        {% endif %}
+        <h1 class="display-5 fw-bold" style="color: #0dcaf0;">{{ profile_user.username }}</h1>
+        {% if profile.bio %}<p class="lead text-light">{{ profile.bio }}</p>{% endif %}
+        
+        <div class="mt-3">
+            {% if profile_user.email %}<a href="mailto:{{ profile_user.email }}" class="btn btn-outline-info btn-sm me-2"><i class="bi bi-envelope"></i> Email</a>{% endif %}
+            {% for link in social_links %}
+                <a href="{{ link.url }}" target="_blank" class="btn btn-outline-info btn-sm me-2"><i class="bi bi-link-45deg"></i> {{ link.platform }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr style="border-color: #444;">
+
+    <!-- Content Grid -->
+    <div class="row g-4 mt-4">
+        <!-- Left Side: Education & Skills -->
+        <div class="col-md-5">
+            <h4 class="fw-bold mb-3" style="color: #0dcaf0;"><i class="bi bi-mortarboard"></i> Education</h4>
+            {% for edu in educations %}
+                <div class="mb-3">
+                    <h6 class="mb-1 text-light">{{ edu.degree }}</h6>
+                    <p class="text-muted mb-0 small">{{ edu.institute }} ({{ edu.passing_year }})</p>
+                </div>
+            {% endfor %}
+
+            <h4 class="fw-bold mb-3 mt-5" style="color: #0dcaf0;"><i class="bi bi-lightning-charge"></i> Skills</h4>
+            <div class="d-flex flex-wrap gap-2">
+                {% for skill in skills %}
+                    <span class="badge bg-dark border border-info text-info">{{ skill.skill_name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Side: Experience & Projects -->
+        <div class="col-md-7">
+            <h4 class="fw-bold mb-3" style="color: #0dcaf0;"><i class="bi bi-briefcase"></i> Experience</h4>
+            {% for exp in experiences %}
+                <div class="mb-4">
+                    <h6 class="mb-1 text-light">{{ exp.designation }}</h6>
+                    <p class="text-info mb-1 small">{{ exp.company }}</p>
+                    <small class="text-muted">{{ exp.start_date|date:"M Y" }} – {% if exp.end_date %}{{ exp.end_date|date:"M Y" }}{% else %}Present{% endif %}</small>
+                    {% if exp.description %}<p class="mt-2 small text-light">{{ exp.description }}</p>{% endif %}
+                </div>
+            {% endfor %}
+
+            <h4 class="fw-bold mb-3 mt-4" style="color: #0dcaf0;"><i class="bi bi-folder"></i> Projects</h4>
+            {% for project in projects %}
+                <div class="mb-3">
+                    <h6 class="mb-1 text-light">{{ project.project_name }}</h6>
+                    <p class="text-muted small mb-1">{{ project.description }}</p>
+                    {% if project.live_link %}<a href="{{ project.live_link }}" target="_blank" class="text-info small">View Project &rarr;</a>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
