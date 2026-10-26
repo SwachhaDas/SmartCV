@@ -1,0 +1,39 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Cards - {{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="container py-5 bg-light rounded shadow-sm">
+    <h2 class="text-center mb-5 fw-bold">{{ profile_user.username }}</h2>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-top border-4 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary mb-4">Experience</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for exp in experiences %}
+                        <li class="list-group-item px-0 bg-transparent">
+                            <strong>{{ exp.designation }}</strong><br>
+                            <small class="text-muted">{{ exp.company }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-top border-4 border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success mb-4">Skills</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for skill in skills %}
+                            <span class="badge bg-success">{{ skill.skill_name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

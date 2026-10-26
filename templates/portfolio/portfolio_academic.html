@@ -1,34 +1,20 @@
 {% extends 'portfolio/base.html' %}
-{% block title %}{{ profile_user.username }} - Academic{% endblock %}
-
+{% block title %}Academic - {{ profile_user.username }}{% endblock %}
 {% block content %}
-<div class="container py-5" style="font-family: 'Times New Roman', serif;">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold text-uppercase">{{ profile_user.username }}</h1>
-        <p class="mb-1">{{ profile.phone }} | {{ profile_user.email }}</p>
+<div class="container py-5" style="font-family: 'Times New Roman', serif; max-width: 900px;">
+    <div class="text-center mb-5 border-bottom border-dark pb-3">
+        <h1 class="fw-bold">{{ profile_user.username }}</h1>
+        <p>{{ profile.phone }} | {{ profile_user.email }}</p>
     </div>
-
-    {% if profile.bio %}
-    <h5 class="border-bottom border-dark pb-1 mb-3 text-uppercase">Research Interest</h5>
-    <p>{{ profile.bio }}</p>
-    {% endif %}
-
-    <h5 class="border-bottom border-dark pb-1 mb-3 mt-4 text-uppercase">Education</h5>
-    {% for edu in educations %}
-    <div class="d-flex justify-content-between mb-2">
-        <div>
-            <strong>{{ edu.degree }}</strong>, {{ edu.institute }}
-        </div>
-        <div>{{ edu.passing_year }}</div>
-    </div>
-    {% endfor %}
-
-    <h5 class="border-bottom border-dark pb-1 mb-3 mt-4 text-uppercase">Academic Projects</h5>
-    {% for proj in projects %}
+    <h4 class="text-uppercase border-bottom pb-1 mb-3">Experience</h4>
+    {% for exp in experiences %}
     <div class="mb-3">
-        <strong>{{ proj.project_name }}</strong>
-        <p class="mb-0">{{ proj.description }}</p>
+        <strong>{{ exp.designation }}</strong>, {{ exp.company }}
+        <p class="mb-0 small">{{ exp.description }}</p>
     </div>
     {% endfor %}
+    <div class="mt-5">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
+    </div>
 </div>
 {% endblock %}

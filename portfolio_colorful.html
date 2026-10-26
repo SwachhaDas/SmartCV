@@ -1,0 +1,36 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Colorful - {{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="p-4 rounded shadow-sm" style="background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 50%, #A1C4FD 100%); min-height: 80vh;">
+    <div class="text-center mb-5 pt-3">
+        <h1 class="display-4 fw-bold text-dark">{{ profile_user.username }}</h1>
+        <p class="lead text-dark bg-white d-inline-block px-3 py-1 rounded-pill shadow-sm">{{ profile.bio }}</p>
+    </div>
+    <div class="row g-4 px-md-5">
+        {% for edu in educations %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg h-100 rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="text-danger fw-bold">{{ edu.degree }}</h5>
+                    <p class="mb-0 text-muted">{{ edu.institute }} ({{ edu.passing_year }})</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% for exp in experiences %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg h-100 rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="text-primary fw-bold">{{ exp.designation }}</h5>
+                    <p class="mb-2 text-muted">{{ exp.company }}</p>
+                    <p class="small">{{ exp.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+        <a href="{% url 'dashboard' %}" class="btn btn-dark">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

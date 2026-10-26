@@ -35,7 +35,6 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Profile is auto-created by the signal in signals.py
             login(request, user)
             messages.success(request, "Account created successfully!")
             return redirect('dashboard')
@@ -45,12 +44,10 @@ def register(request):
 
 
 class CustomLoginView(LoginView):
-    """Custom login view with our template."""
     template_name = 'portfolio/login.html'
 
 
 class CustomLogoutView(LogoutView):
-    """Custom logout redirecting to home."""
     next_page = 'home'
 
 
@@ -58,7 +55,6 @@ class CustomLogoutView(LogoutView):
 
 @login_required
 def profile_update(request):
-    """Update user and profile info."""
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
@@ -77,7 +73,6 @@ def profile_update(request):
 
 @login_required
 def dashboard(request):
-    """User dashboard with counts and quick actions."""
     context = {
         'edu_count': request.user.educations.count(),
         'exp_count': request.user.experiences.count(),
@@ -326,11 +321,9 @@ def public_portfolio(request, username):
         'social_links': user.social_links.all(),
     }
 
-    # ✅ Check if the user wants a full website or a simple portfolio
     if profile.is_website_mode:
         return render(request, 'portfolio/website_mode.html', context)
 
-    # Default: Choose template based on user's choice
     template_name = f'portfolio/portfolio_{profile.template}.html'
     return render(request, template_name, context)
 
@@ -338,17 +331,14 @@ def public_portfolio(request, username):
 # ==================== NEW: GUIDELINE & CV OPTIONS ====================
 
 def guideline(request):
-    """Instruction page for users on how to use SmartCV."""
     return render(request, 'portfolio/guideline.html')
 
 
 def cv_generation_options(request):
-    """Page to select CV type (Academic, Job, Faculty) before generating."""
     if request.method == 'POST':
         cv_type = request.POST.get('cv_type')
         user = request.user
         
-        # --- MANDATORY VALIDATION LOGIC ---
         if cv_type == 'academic':
             if not user.educations.exists() or not user.projects.exists():
                 messages.error(request, "For Academic CV, you must add at least 1 Education and 1 Project/Research!")
@@ -364,14 +354,12 @@ def cv_generation_options(request):
                 messages.error(request, "For Faculty CV, you must add Education and Teaching Experience!")
                 return redirect('dashboard')
 
-        # Save activity history
         ActivityHistory.objects.create(
             user=user, 
             action='download_pdf', 
             details=f'Generated {cv_type.capitalize()} CV'
         )
 
-        # Redirect to PDF download with the type
         return redirect(f"/download-pdf/?type={cv_type}")
 
     return render(request, 'portfolio/cv_options.html')
@@ -381,17 +369,14 @@ def cv_generation_options(request):
 
 @login_required
 def download_resume_pdf(request):
-    """Generate and download user's resume as PDF."""
     user = request.user
-    cv_type = request.GET.get('type', 'job') # Get the CV type from URL (default to job)
+    cv_type = request.GET.get('type', 'job')
 
-    # Ensure profile exists
     try:
         profile = user.profile
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user=user)
 
-    # Generate PDF
     pdf_buffer = generate_resume_pdf(
         user=user,
         profile=profile,
@@ -400,7 +385,7 @@ def download_resume_pdf(request):
         skills=user.skills.all(),
         projects=user.projects.all(),
         social_links=user.social_links.all(),
-        cv_type=cv_type # Pass the type to pdf generator
+        cv_type=cv_type
     )
 
     filename = f"{user.username}_{cv_type}_resume.pdf"
@@ -416,10 +401,7 @@ def download_resume_pdf(request):
 
 @login_required
 def activity_history(request):
-    """Show user's past activities (downloads, additions, etc.)."""
-    # Fetch history from database, ordered by latest first
     activities = ActivityHistory.objects.filter(user=request.user)
-    
     context = {
         'activities': activities
     }
@@ -435,14 +417,14 @@ def template_selector(request):
     
     if request.method == 'POST':
         selected_template = request.POST.get('template')
-        # Check if the selected template is valid
-        if selected_template in dict(Profile.TEMPLATE_CHOICES):
+        if selected_template:
+            # Forcefully save the selected template
             profile.template = selected_template
+            profile.is_website_mode = False 
             profile.save()
-            messages.success(request, f"Template updated successfully!")
+            messages.success(request, f"Template changed to {selected_template} successfully!")
             return redirect('dashboard')
             
-    # Pass all choices to the template
     templates = Profile.TEMPLATE_CHOICES
     context = {
         'templates': templates,

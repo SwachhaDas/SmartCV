@@ -1,0 +1,34 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Classic - {{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="container py-5 bg-white rounded shadow-sm" style="font-family: Arial, sans-serif;">
+    <div class="text-center mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark text-uppercase">{{ profile_user.username }}</h1>
+        <p class="text-secondary">{{ profile.bio }}</p>
+    </div>
+    <div class="row">
+        <div class="col-md-7 border-end">
+            <h5 class="fw-bold text-dark text-uppercase mb-4">Experience</h5>
+            {% for exp in experiences %}
+            <div class="mb-3">
+                <h6 class="fw-bold mb-1">{{ exp.designation }}</h6>
+                <p class="text-muted small mb-1">{{ exp.company }} | {{ exp.start_date|date:"Y" }} - Present</p>
+                <p class="small">{{ exp.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-5 ps-4">
+            <h5 class="fw-bold text-dark text-uppercase mb-4">Education</h5>
+            {% for edu in educations %}
+            <div class="mb-3">
+                <h6 class="fw-bold mb-1">{{ edu.degree }}</h6>
+                <p class="text-muted small">{{ edu.institute }} ({{ edu.passing_year }})</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-center mt-5 pt-4 border-top">
+        <a href="{% url 'dashboard' %}" class="btn btn-dark">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'portfolio/base.html' %}
+{% block title %}Sidebar - {{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="row shadow rounded overflow-hidden min-vh-100">
+    <div class="col-md-4 bg-dark text-white p-5 text-center">
+        <h3>{{ profile_user.username }}</h3>
+        <p class="small text-light mt-3">{{ profile.bio }}</p>
+        <hr class="bg-light">
+        <h5 class="mt-4 mb-3">Skills</h5>
+        {% for skill in skills %}
+            <p class="mb-1 text-start"><i class="bi bi-check2 text-success"></i> {{ skill.skill_name }}</p>
+        {% endfor %}
+    </div>
+    <div class="col-md-8 bg-white p-5">
+        <h3 class="border-bottom pb-2 mb-4">Experience</h3>
+        {% for exp in experiences %}
+        <div class="mb-4">
+            <h5>{{ exp.designation }}</h5>
+            <p class="text-muted mb-1">{{ exp.company }}</p>
+        </div>
+        {% endfor %}
+        <div class="mt-5">
+            <a href="{% url 'dashboard' %}" class="btn btn-dark">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
