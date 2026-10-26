@@ -1,83 +1,105 @@
-{% extends 'portfolio/base.html' %}
-
+{% extends "portfolio/base.html" %}
 {% block title %}Dashboard - SmartCV{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>
-        <i class="bi bi-speedometer2 text-primary"></i> Dashboard
-    </h2>
-    <span class="text-muted">Welcome, <strong>{{ user.username }}</strong>!</span>
-</div>
+<div class="container py-4">
+  <div class="dash-layout">
+    
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="dash-sidebar sc-card p-3">
+      <a href="{% url 'dashboard' %}" class="active"><i class="bi bi-grid-1x2-fill"></i> Overview</a>
+      <a href="{% url 'education_list' %}"><i class="bi bi-mortarboard-fill"></i> Education</a>
+      <a href="{% url 'experience_list' %}"><i class="bi bi-briefcase-fill"></i> Experience</a>
+      <a href="{% url 'skill_list' %}"><i class="bi bi-lightning-charge-fill"></i> Skills</a>
+      <a href="{% url 'project_list' %}"><i class="bi bi-kanban-fill"></i> Projects</a>
+      <a href="{% url 'sociallink_list' %}"><i class="bi bi-link-45deg"></i> Social links</a>
+      <hr>
+      <a href="{% url 'pdf_template_select' %}"><i class="bi bi-file-earmark-pdf-fill"></i> PDF Studio</a>
+      <a href="{% url 'template_selector' %}"><i class="bi bi-palette-fill"></i> Templates</a>
+      <a href="{% url 'history' %}"><i class="bi bi-clock-history"></i> Activity</a>
+    </aside>
 
-<!-- Stats Cards -->
-<div class="row g-4">
-    <div class="col-md-6 col-lg-3">
-        <div class="card p-3 text-center h-100">
-            <i class="bi bi-mortarboard fs-1 text-primary"></i>
-            <h3 class="mt-2">{{ edu_count }}</h3>
-            <p class="text-muted mb-2">Education</p>
-            <a href="{% url 'education_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+    <!-- ============ MAIN ============ -->
+    <div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 reveal">
+        <div>
+          <h2 class="fw-bold mb-1">Welcome back, <span class="text-gradient">{{ user.username }}</span> 👋</h2>
+          <p class="text-muted mb-0">Complete your profile, then generate your CV.</p>
         </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card p-3 text-center h-100">
-            <i class="bi bi-briefcase fs-1 text-primary"></i>
-            <h3 class="mt-2">{{ exp_count }}</h3>
-            <p class="text-muted mb-2">Experience</p>
-            <a href="{% url 'experience_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card p-3 text-center h-100">
-            <i class="bi bi-lightning-charge fs-1 text-primary"></i>
-            <h3 class="mt-2">{{ skill_count }}</h3>
-            <p class="text-muted mb-2">Skills</p>
-            <a href="{% url 'skill_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card p-3 text-center h-100">
-            <i class="bi bi-folder fs-1 text-primary"></i>
-            <h3 class="mt-2">{{ proj_count }}</h3>
-            <p class="text-muted mb-2">Projects</p>
-            <a href="{% url 'project_list' %}" class="btn btn-sm btn-outline-primary">Manage</a>
-        </div>
-    </div>
-</div>
+        <a href="/u/{{ user.username }}/" target="_blank" class="btn btn-outline-primary rounded-pill mt-2 mt-md-0">
+          <i class="bi bi-box-arrow-up-right"></i> View portfolio
+        </a>
+      </div>
 
-<!-- Quick Actions -->
-<div class="card p-4 mt-4">
-    <h5 class="mb-3">Quick Actions</h5>
-    <div class="d-flex flex-wrap gap-2">
-        <!-- Profile & Portfolio Links -->
-        <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+      <!-- Profile Completion -->
+      <div class="sc-card mb-4 reveal">
+        <div class="row align-items-center g-4">
+          <div class="col-md-auto d-flex justify-content-center">
+            {% include "partials/profile_ring.html" with percent=completion.percent %}
+          </div>
+          <div class="col">
+            <h5 class="fw-semibold">Your next steps</h5>
+            <div>
+              {% for step in completion.steps %}
+                <a href="{% url step.url_name %}" class="todo-item {% if step.done %}done{% endif %}">
+                  <span class="dot"><i class="bi bi-check-lg"></i></span>
+                  <span>{{ step.label }}</span>
+                  {% if not step.done %}<i class="bi bi-chevron-right ms-auto text-muted"></i>{% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row g-3 mb-4">
+        {% for icon, label, count, url in stat_cards %}
+        <div class="col-6 col-xl-3 reveal">
+          <a href="{% url url %}" class="text-decoration-none text-reset">
+            <div class="stat-card">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-icon"><i class="bi {{ icon }}"></i></div>
+                <i class="bi bi-plus-circle text-muted"></i>
+              </div>
+              <div class="stat-number" data-count="{{ count }}">0</div>
+              <div class="text-muted">{{ label }}</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="sc-card reveal">
+        <h5 class="fw-semibold mb-4">Quick Actions</h5>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'profile' %}" class="btn btn-outline-primary rounded-pill px-4">
             <i class="bi bi-person-gear"></i> Edit Profile
-        </a>
-        <a href="{% url 'sociallink_list' %}" class="btn btn-outline-secondary">
+          </a>
+          <a href="{% url 'sociallink_list' %}" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="bi bi-link-45deg"></i> Social Links ({{ social_count }})
-        </a>
-        <a href="{% url 'public_portfolio' user.username %}" target="_blank" class="btn btn-outline-success">
+          </a>
+          <a href="{% url 'public_portfolio' user.username %}" target="_blank" class="btn btn-outline-success rounded-pill px-4">
             <i class="bi bi-eye"></i> View Public Portfolio
-        </a>
-        
-        <!-- Template Selection Link (NEW) -->
-        <a href="{% url 'template_selector' %}" class="btn btn-outline-warning">
+          </a>
+          
+          <a href="{% url 'template_selector' %}" class="btn btn-outline-warning rounded-pill px-4">
             <i class="bi bi-palette"></i> Change Template
-        </a>
-
-        <!-- CV & Guideline Links -->
-        <a href="{% url 'generate_cv' %}" class="btn btn-primary">
-            <i class="bi bi-file-earmark-pdf"></i> Generate CV / PDF
-        </a>
-        <a href="{% url 'guideline' %}" class="btn btn-outline-info">
+          </a>
+          <a href="{% url 'pdf_template_select' %}" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-file-earmark-pdf"></i> PDF Studio
+          </a>
+          
+          <a href="{% url 'guideline' %}" class="btn btn-outline-info rounded-pill px-4">
             <i class="bi bi-info-circle"></i> How to Use
-        </a>
-
-        <!-- Activity History Link -->
-        <a href="{% url 'history' %}" class="btn btn-outline-dark">
+          </a>
+          <a href="{% url 'history' %}" class="btn btn-outline-dark rounded-pill px-4">
             <i class="bi bi-clock-history"></i> Activity History
-        </a>
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

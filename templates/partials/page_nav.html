@@ -1,0 +1,17 @@
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4 pt-3 border-top">
+  <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4">
+    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+  </a>
+  <div class="d-flex gap-2">
+    {% if prev_url %}
+      <a href="{{ prev_url }}" class="btn btn-outline-primary rounded-pill px-4">
+        <i class="bi bi-chevron-left"></i> Previous{% if prev_label %}: {{ prev_label }}{% endif %}
+      </a>
+    {% endif %}
+    {% if next_url %}
+      <a href="{{ next_url }}" class="btn btn-primary rounded-pill px-4">
+        Next{% if next_label %}: {{ next_label }}{% endif %} <i class="bi bi-chevron-right"></i>
+      </a>
+    {% endif %}
+  </div>
+</div>

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
-    # Updated template choices to support 10 different designs
+    # HTML Portfolio Template Choices
     TEMPLATE_CHOICES = [
         ('classic', '1. Classic Corporate'),
         ('modern', '2. Modern Executive'),
@@ -17,15 +17,26 @@ class Profile(models.Model):
         ('elegant', '10. Elegant Serif'),
     ]
 
+    # PDF Template Choices (ATS Friendly)
+    PDF_TEMPLATE_CHOICES = [
+        ('classic', 'Classic (Single Column, ATS)'),
+        ('modern', 'Modern (Two-Column Sidebar)'),
+        ('minimal', 'Minimal (Elegant Serif)'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     photo = models.ImageField(upload_to='photos/', blank=True, null=True)
+    
+    # HTML Template field
     template = models.CharField(max_length=20, choices=TEMPLATE_CHOICES, default='classic')
+    
+    # PDF Template field (NEW)
+    pdf_template = models.CharField(max_length=20, choices=PDF_TEMPLATE_CHOICES, default='classic')
+    
     is_public = models.BooleanField(default=True)
     visitor_count = models.PositiveIntegerField(default=0)
-    
-    # This will turn the simple portfolio into a full website layout
     is_website_mode = models.BooleanField(default=False, help_text="Check this to make it a full website.")
 
     def __str__(self):
@@ -48,16 +59,12 @@ class ActivityHistory(models.Model):
     details = models.CharField(max_length=255, blank=True)
 
     class Meta:
-        ordering = ['-timestamp'] # Shows latest activity first
+        ordering = ['-timestamp']
         verbose_name_plural = "Activity Histories"
 
     def __str__(self):
         return f"{self.user.username} - {self.action} at {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
 
-
-# ==========================================
-# REMAINING MODELS
-# ==========================================
 
 class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='educations')

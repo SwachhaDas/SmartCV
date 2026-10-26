@@ -1,0 +1,98 @@
+{% extends "portfolio/base.html" %}
+{% load static %}
+{% block title %}Template Studio - SmartCV{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'css/template-selector.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-3">
+  <!-- Top bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+      <h3 class="fw-bold mb-0">Template <span class="text-gradient">Studio</span></h3>
+      <small class="text-muted">Click or hover a template to preview your own data.</small>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span id="statusBadge" class="badge rounded-pill text-bg-success d-none">Unsaved changes</span>
+      <a href="/u/{{ user.username }}/" target="_blank" class="btn btn-outline-primary rounded-pill">
+        <i class="bi bi-box-arrow-up-right"></i> Live site
+      </a>
+      <button id="saveBtn" type="button" class="btn btn-gradient rounded-pill px-4" disabled>
+        <span class="spinner-border spinner-border-sm d-none" id="saveSpin"></span>
+        <i class="bi bi-rocket-takeoff" id="saveIcon"></i> Save &amp; Publish
+      </button>
+    </div>
+  </div>
+
+  <div class="studio" id="studio" data-current="{{ current_template }}" data-save-url="{% url 'template_selector' %}">
+    
+    <!-- LEFT: Template List -->
+    <aside class="studio-list">
+      <div class="studio-list-inner">
+        <div class="d-flex flex-column gap-2">
+          {% for t in portfolio_templates %}
+          <button type="button" class="tpl-card-btn" data-slug="{{ t.slug }}" data-name="{{ t.name }}" data-preview-url="{% url 'template_preview' t.slug %}">
+            <div class="tpl-inner d-flex align-items-center p-2 rounded-3 border">
+              <span class="tpl-check"><i class="bi bi-check-lg"></i></span>
+              
+              <!-- Icon Box -->
+              <div class="tpl-icon-box d-flex justify-content-center align-items-center bg-light rounded me-3" style="width: 50px; height: 50px; flex-shrink: 0;">
+                <i class="bi {{ t.image }} fs-3 text-primary"></i>
+              </div>
+              
+              <!-- Details Box -->
+              <div class="text-start">
+                <div class="fw-bold mb-0">{{ t.name }}</div>
+                <div class="text-muted" style="font-size:0.75rem;">{{ t.desc }}</div>
+              </div>
+            </div>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: Live Preview -->
+    <section class="studio-preview">
+      <div class="preview-toolbar">
+        <div class="d-flex align-items-center gap-2">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="ms-2 small text-muted text-truncate" id="previewTitle">Preview</span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Device size">
+          <button type="button" class="btn btn-outline-secondary active" data-device="1280"><i class="bi bi-display"></i></button>
+          <button type="button" class="btn btn-outline-secondary" data-device="820"><i class="bi bi-tablet"></i></button>
+          <button type="button" class="btn btn-outline-secondary" data-device="390"><i class="bi bi-phone"></i></button>
+        </div>
+      </div>
+
+      <div class="preview-stage" id="stage">
+        <div class="preview-loading" id="previewLoading"><div class="spinner-border text-primary"></div></div>
+        <div class="preview-error d-none" id="previewError">
+          <i class="bi bi-exclamation-triangle fs-1"></i>
+          <p class="mb-2">Could not load this preview.</p>
+          <button type="button" class="btn btn-sm btn-outline-primary" id="retryBtn">Try again</button>
+        </div>
+        <iframe id="previewFrame" title="Portfolio live preview" sandbox="allow-scripts"></iframe>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+  <div id="toast" class="toast align-items-center text-bg-dark border-0" role="status">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody">Saved</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/template-selector.js' %}" defer></script>
+{% endblock %}

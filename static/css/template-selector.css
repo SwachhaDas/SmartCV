@@ -1,0 +1,95 @@
+/* =========================================================
+   Template Studio - Split Screen Layout
+   ========================================================= */
+
+.studio {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 1.5rem;
+  height: calc(100vh - 150px); /* Fits the screen */
+  min-height: 600px;
+}
+
+/* ---------- LEFT: Cards ---------- */
+.studio-list {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-y: auto;
+  height: 100%;
+}
+.studio-list-inner { padding: 1rem; }
+
+.tpl-card-btn {
+  display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit;
+  text-align: left; cursor: pointer;
+}
+.tpl-card-btn .tpl-inner {
+  position: relative;
+  background: var(--surface); 
+  border: 2px solid var(--border) !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.tpl-card-btn:hover .tpl-inner { 
+  transform: translateY(-3px); 
+  box-shadow: var(--shadow-sm); 
+  border-color: var(--accent) !important;
+}
+.tpl-card-btn.is-previewing .tpl-inner { 
+  border-color: var(--accent) !important; 
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.tpl-card-btn .tpl-check {
+  position: absolute; top: -8px; right: -8px; z-index: 2;
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: #fff; font-size: .8rem;
+  transform: scale(0); transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+}
+.tpl-card-btn.is-previewing .tpl-check { transform: scale(1); }
+
+/* ---------- RIGHT: Preview ---------- */
+.studio-preview {
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 100%;
+}
+.preview-toolbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: .75rem 1rem; border-bottom: 1px solid var(--border); background: var(--bg);
+}
+.preview-toolbar .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+
+.preview-stage {
+  position: relative; flex: 1; overflow: hidden;
+  background: #e9ecef;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: 1rem;
+}
+
+#previewFrame {
+  border: 0; background: #fff;
+  transform-origin: top center;
+  transition: opacity .3s ease;
+  opacity: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
+  border-radius: 8px;
+}
+#previewFrame.ready { opacity: 1; }
+
+.preview-loading, .preview-error {
+  position: absolute; inset: 0; display: grid; place-content: center; text-align: center;
+  background: rgba(255,255,255,0.8); z-index: 3; color: var(--muted);
+}
+.preview-loading { opacity: 0; pointer-events: none; transition: opacity .2s; }
+.preview-loading.show { opacity: 1; pointer-events: auto; }
+
+/* Responsive */
+@media (max-width: 991px) {
+  .studio { grid-template-columns: 1fr; height: auto; }
+  .studio-preview { height: 500px; }
+}
