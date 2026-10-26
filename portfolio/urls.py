@@ -62,8 +62,11 @@ urlpatterns = [
     # PDF Studio & Actions
     path('pdf-studio/', views.pdf_template_select_view, name='pdf_template_select'),
     
-    # PDF Download/Preview (Accepts type and template in URL for iframe)
+    # PDF Download for PDF Studio (Accepts type and template in URL)
     path('pdf/<str:type>/<str:template>/', views.pdf_download_view, name='pdf_download'),
+    
+    # Fallback Download URL (For Claude's HTML templates)
+    path('download-pdf/', views.pdf_download_view, {'type': 'job', 'template': 'classic'}, name='download_pdf'),
     
     # Apply Template (AJAX)
     path('studio/apply/', views.apply_template, name='apply_template'),
