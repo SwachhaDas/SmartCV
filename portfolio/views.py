@@ -306,7 +306,7 @@ def apply_template(request):
     return JsonResponse({
         "ok": True,
         "live_url": reverse("public_portfolio", args=[request.user.username]),
-        "pdf_url": reverse("pdf_download", args=["job", tpl]), # job is default, but URL requires type & template
+        "pdf_url": reverse("pdf_download", args=["job", tpl]), 
     })
 
 
@@ -319,12 +319,12 @@ def cv_generation_options(request):
     if request.method == 'POST':
         cv_type = request.POST.get('cv_type')
         user = request.user
-        # Optional: Validation logic here
         ActivityHistory.objects.create(user=user, action='download_pdf', details=f'Generated {cv_type.capitalize()} CV')
-        return redirect('pdf_template_select') # Redirect to PDF Studio instead of downloading directly
+        return redirect('pdf_template_select') 
     return render(request, 'portfolio/cv_options.html')
 
 @login_required
 def activity_history(request):
-    activities = ActivityHistory.objects.filter(user=request.user)
+    """Fetches activity log for the logged-in user, ordered by latest first."""
+    activities = ActivityHistory.objects.filter(user=request.user).order_by("-timestamp")
     return render(request, 'portfolio/history.html', {'activities': activities})

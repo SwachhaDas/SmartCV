@@ -1,6 +1,5 @@
 from io import BytesIO
 from xml.sax.saxutils import escape
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -14,6 +13,14 @@ PAGE_W, PAGE_H = A4
 MARGIN = 14 * mm
 GAP = 8 * mm
 
+# ==========================================
+# SECTION ORDER BASED ON CV TYPE
+# ==========================================
+SECTION_ORDER = {
+    "academic": ["education", "projects", "skills", "experience"],
+    "job":      ["experience", "skills", "projects", "education"],
+    "faculty":  ["education", "experience", "projects", "skills"],
+}
 
 # --------------------------------------------------------------------------
 # Data Collection
@@ -32,7 +39,6 @@ def _collect(user):
         "projects": list(user.projects.all()),
         "links": list(user.social_links.all()),
     }
-
 
 # --------------------------------------------------------------------------
 # Helpers
@@ -70,7 +76,6 @@ def _styles(body, muted, heading, accent, link, name_color=None, contact_color=N
 def _section(title, body, st):
     if not body: return []
     return [Paragraph(title.upper(), st["h2"]), HRFlowable(width="100%", thickness=0.8, color=colors.HexColor(st["accent"]), spaceBefore=0, spaceAfter=5)] + body
-
 
 # --------------------------------------------------------------------------
 # Content Blocks
@@ -130,7 +135,6 @@ def _links_inline(data, st):
     parts = [f'<link href="{_href(l.url)}" color="{st["link"]}">{_t(l.platform)}</link>' for l in data["links"]]
     return Paragraph("  |  ".join(parts), st["contact"])
 
-
 # --------------------------------------------------------------------------
 # Document Layout Engine
 # --------------------------------------------------------------------------
@@ -181,23 +185,74 @@ def _two_column(buf, data, *, st, band, left, right, left_ratio, header_extra=No
 
     doc.build(head + [FrameBreak(), _fit(left, left_w, body_h), FrameBreak(), _fit(right, right_w, body_h)])
 
-
 # --------------------------------------------------------------------------
 # Three PDF Layouts
 # --------------------------------------------------------------------------
-def _classic(buf, data):
+
+def _classic(buf, data, cv_type):
     st = _styles(body="#1f2937", muted="#6b7280", heading="#1e3a8a", accent="#1e3a8a", link="#1d4ed8", name_color="#ffffff", contact_color="#dbeafe", name_size=26)
-    left = _section("Profile", _profile_block(data, st), st) + _section("Experience", _experience_block(data, st), st) + _section("Projects", _projects_block(data, st), st)
-    right = _section("Education", _education_block(data, st), st) + _section("Skills", _skills_block(data, st, as_lines=True), st) + _section("Links", _links_block(data, st), st)
-    _two_column(buf, data, st=st, band="#1e3a8a", left=left, right=right, left_ratio=0.6)
+    
+    sections = {
+        "profile": _section("Profile", _profile_block(data, st), st),
+        "education": _section("Education", _education_block(data, st), st),
+        "experience": _section("Experience", _experience_block(data, st), st),
+        "skills": _section("Skills", _skills_block(data, st, as_lines=True), st),
+        "projects": _section("Projects", _projects_block(data, st), st),
+        "links": _section("Links", _links_block(data, st), st),
+    }
+    
+    left_flow = sections["profile"]
+    right_flow = []
+    for key in SECTION_ORDER.get(cv_type, SECTION_ORDER["job"]):
+        right_flow += sections[key]
 
-def _minimal(buf, data):
+    # Classic: Single column with a beautiful blue header band
+    header_h = 38 * mm
+    total_w = PAGE_W - 2 * MARGIN
+    body_h = PAGE_H - header_h - MARGIN - 6 * mm
+
+    def on_page(c, _doc):
+        c.saveState()
+        c.setFillColor(colors.HexColor("#1e3a8a"))
+        c.rect(0, PAGE_H - header_h, PAGE_W, header_h, stroke=0, fill=1)
+        c.restoreState()
+
+    doc = _doc(buf, data)
+    doc.addPageTemplates([PageTemplate(id="main", frames=[
+        _frame("head", MARGIN, PAGE_H - header_h + 4 * mm, total_w, header_h - 8 * mm),
+        _frame("body", MARGIN, MARGIN, total_w, body_h),
+    ], onPage=on_page)])
+
+    head = [Paragraph(_t(data["name"]), st["name"])]
+    if _contact_line(data): head.append(Paragraph(_contact_line(data), st["contact"]))
+    
+    body = left_flow + right_flow
+    doc.build(head + [FrameBreak(), _fit(body, total_w, body_h)])
+
+
+def _minimal(buf, data, cv_type):
     st = _styles(body="#374151", muted="#6b7280", heading="#111827", accent="#111827", link="#2563eb", name_size=26)
-    left = _section("Profile", _profile_block(data, st), st) + _section("Experience", _experience_block(data, st), st) + _section("Projects", _projects_block(data, st), st)
-    right = _section("Education", _education_block(data, st), st) + _section("Skills", _skills_block(data, st), st)
-    _two_column(buf, data, st=st, band=None, left=left, right=right, left_ratio=0.62, header_extra=_links_inline(data, st))
+    
+    sections = {
+        "profile": _section("Profile", _profile_block(data, st), st),
+        "education": _section("Education", _education_block(data, st), st),
+        "experience": _section("Experience", _experience_block(data, st), st),
+        "skills": _section("Skills", _skills_block(data, st), st),
+        "projects": _section("Projects", _projects_block(data, st), st),
+    }
 
-def _modern(buf, data):
+    order = SECTION_ORDER.get(cv_type, SECTION_ORDER["job"])
+    left = sections["profile"]
+    right = []
+    
+    for i, key in enumerate(order):
+        if i < 2: left += sections[key]
+        else: right += sections[key]
+
+    _two_column(buf, data, st=st, band=None, left=left, right=right, left_ratio=0.5, header_extra=_links_inline(data, st))
+
+
+def _modern(buf, data, cv_type):
     sb_w = 66 * mm
     side = _styles(body="#e5e7eb", muted="#9ca3af", heading="#ffffff", accent="#38bdf8", link="#7dd3fc")
     main = _styles(body="#374151", muted="#6b7280", heading="#111827", accent="#0ea5e9", link="#0369a1", name_size=28)
@@ -218,8 +273,20 @@ def _modern(buf, data):
         PageTemplate(id="later", onPage=on_page, frames=[_frame("main2", main_x, MARGIN, main_w, full_h)]),
     ])
 
-    sidebar = _section("Contact", _contact_block(data, side), side) + _section("Skills", _skills_block(data, side, as_lines=True), side) + _section("Education", _education_block(data, side), side) + _section("Links", _links_block(data, side), side)
-    content = [Paragraph(_t(data["name"]), main["name"]), Spacer(1, 4)] + _section("Profile", _profile_block(data, main), main) + _section("Experience", _experience_block(data, main), main) + _section("Projects", _projects_block(data, main), main)
+    sidebar = _section("Contact", _contact_block(data, side), side) + _section("Skills", _skills_block(data, side, as_lines=True), side) + _section("Links", _links_block(data, side), side)
+    
+    content = [Paragraph(_t(data["name"]), main["name"]), Spacer(1, 4)]
+    
+    sections = {
+        "profile": _section("Profile", _profile_block(data, main), main),
+        "education": _section("Education", _education_block(data, main), main),
+        "experience": _section("Experience", _experience_block(data, main), main),
+        "projects": _section("Projects", _projects_block(data, main), main),
+    }
+    
+    for key in SECTION_ORDER.get(cv_type, SECTION_ORDER["job"]):
+        if key in sections:
+            content += sections[key]
 
     doc.build([NextPageTemplate("later"), _fit(sidebar, side_w, full_h), FrameBreak()] + content)
 
@@ -228,11 +295,10 @@ _BUILDERS = {"classic": _classic, "modern": _modern, "minimal": _minimal}
 
 def build_cv_pdf(user, cv_type="job", template_slug=None):
     """Returns a BytesIO buffer containing the PDF."""
-    # Fallback to profile selection if no template_slug is passed
     if not template_slug:
         template_slug = getattr(user.profile, "pdf_template", "classic")
     data = _collect(user)
     buf = BytesIO()
-    _BUILDERS.get(template_slug or "classic", _classic)(buf, data)
+    _BUILDERS.get(template_slug or "classic", _classic)(buf, data, cv_type)
     buf.seek(0)
     return buf
